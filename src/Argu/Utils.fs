@@ -122,6 +122,10 @@ type MemberInfo with
         | [||] -> None
         | attrs -> attrs |> Array.last |> unbox<'T> |> Some
 
+#if CORE_CLR
+type Type with
+    member x.GetCustomAttributes(t, b : bool) = x.GetTypeInfo().GetCustomAttributes(t, b)
+#endif
 
 type IDictionary<'K,'V> with
     member d.TryFind k =
