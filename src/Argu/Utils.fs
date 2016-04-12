@@ -134,6 +134,7 @@ type IDictionary<'K,'V> with
         else None
 
 
+
 let currentProgramName = lazy(System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName)
 
 type UnionCaseInfo with
