@@ -80,8 +80,12 @@ let printUsage (msg : string option) (argInfo : ArgInfo list) =
 /// <param name="argInfo"></param>
 /// <param name="args"></param>
 let printCommandLineArgs (argInfo : ArgInfo list) (args : 'Template list) =
-    let printEntry (t : 'Template) =
+    let printEntry (t : 'Template) =        
+#if !NETSTANDARD1_5
         let uci, fields = FSharpValue.GetUnionFields(t, typeof<'Template>, bindingFlags = allBindings)
+#else
+        let uci, fields = FSharpValue.GetUnionFields(t, typeof<'Template>, allowAccessToPrivateRepresentation = true)
+#endif
         let id = ArgId uci
         let aI = argInfo |> List.find (fun aI -> id = aI.Id)
 
@@ -147,7 +151,11 @@ let printCommandLineSyntax (argInfo : ArgInfo list) =
 /// <param name="args"></param>
 let printAppSettings (argInfo : ArgInfo list) printComments (args : 'Template list) =
     let printEntry (t : 'Template) : XNode list =
+#if !NETSTANDARD1_5
         let uci, fields = FSharpValue.GetUnionFields(t, typeof<'Template>, bindingFlags = allBindings)
+#else
+        let uci, fields = FSharpValue.GetUnionFields(t, typeof<'Template>, allowAccessToPrivateRepresentation = true)
+#endif
         let id = ArgId uci
         let aI = argInfo |> List.find (fun aI -> id = aI.Id)
 
