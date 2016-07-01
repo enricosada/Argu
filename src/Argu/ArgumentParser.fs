@@ -34,12 +34,20 @@ type ArgumentParser =
 /// that is an F# discriminated union. It can then be used to parse command line arguments
 /// or XML configuration.
 and ArgumentParser<'Template when 'Template :> IArgParserTemplate> internal (?usageText : string) =
-    do 
+    do
+#if !NETSTANDARD1_5
         if not <| FSharpType.IsUnion(typeof<'Template>, bindingFlags = allBindings) then
+#else
+        if not <| FSharpType.IsUnion(typeof<'Template>, allowAccessToPrivateRepresentation = true) then
+#endif
             invalidArg typeof<'Template>.Name "Argu: template type inaccessible or not F# DU."
 
     let argInfo =
+#if !NETSTANDARD1_5
         FSharpType.GetUnionCases(typeof<'Template>, bindingFlags = allBindings)
+#else
+        FSharpType.GetUnionCases(typeof<'Template>, allowAccessToPrivateRepresentation = true)
+#endif
         |> Seq.map preComputeArgInfo
         |> Seq.sortBy (fun a -> a.UCI.Tag)
         |> Seq.toList

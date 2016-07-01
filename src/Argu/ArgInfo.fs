@@ -226,7 +226,11 @@ let preComputeArgInfo (uci : UnionCaseInfo) : ArgInfo =
     let fields = uci.GetFields()
     let types = fields |> Array.map (fun f -> f.PropertyType)
             
+#if !NETSTANDARD1_5
     let caseCtor = FSharpValue.PreComputeUnionConstructor(uci, bindingFlags = allBindings)
+#else
+    let caseCtor = FSharpValue.PreComputeUnionConstructor(uci, allowAccessToPrivateRepresentation = true)
+#endif
 
     let dummy = 
         let dummyFields = types |> Array.map Unchecked.UntypedDefaultOf
